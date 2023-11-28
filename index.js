@@ -1,15 +1,25 @@
-const express = require("express");
-const errorHandler = require("./middleware/errorhandler");
-const dotenv = require("dotenv").config();
+import express from 'express';
+import dotenv from 'dotenv';
+import { connectDB } from './config/db.js';
+import contactRoutes from './src/routes/contactRoutes.js';
+import userRoutes from './src/routes/userRoutes.js';
 
+dotenv.config();
 const app = express();
 
-const port = process.env.PORT || 5000;
+connectDB();
+
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use("/api/contacts", require("./routes/contactRoutes"));
-app.use(errorHandler);
+app.use(express.urlencoded({ extended: true }));
+app.use("/api/contacts", contactRoutes);
+app.use("/api/users", userRoutes);
+
+app.get('/', (req, res) => {
+    res.send('Hello');
+});
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    console.log(`server is listening on port ${port}`);
 });
