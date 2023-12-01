@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { isEmail } from '../middleware/validator.js'
+import { isEmail } from '../middleware/validator.js';
 
 const userSchema = mongoose.Schema(
     {
