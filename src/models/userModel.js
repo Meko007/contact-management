@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import { isEmail } from '../middleware/validator.js';
 
 const userSchema = mongoose.Schema(
@@ -13,19 +14,39 @@ const userSchema = mongoose.Schema(
             unique: [true, "Email address already used"],
             trim: true,
             lowercase: true,
-            validate: [isEmail, 'Please fill a valid email address']
+            validate: [isEmail, "Please enter a valid email"]
         },
         password: {
             type: String,
-            required: [true, "Please add a password"],
+            required: [true, "Please enter a password"],
             minLength: 8,
             maxLength: 1024
+        },
+        confirmPassword: {
+            type: String,
+            required: [true, "Please confirm your password"],
+            validate: {
+                validator: function (val) {
+                    return val === this.password 
+                },
+                message: `Passwords don't match!`
+            }
         } 
     },
     {
         timestamps: true
     }
 );
+
+userSchema.pre('save', async function (next){
+    if (!this.isModified('password')) return next(); 
+
+    this.password = await bcrypt.hash(this.password, 10);
+
+    this.confirmPassword = undefined;
+    next();
+});
+
 
 const User = mongoose.model('User', userSchema);
 
