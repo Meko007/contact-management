@@ -9,15 +9,11 @@ export const registerUser = async (req, res) => {
     try{
         const { username, email, password, confirmPassword } = req.body;
         const userExists = await User.findOne({ email });
-        if(userExists){
-            res.status(400);
-            throw new Error("User already exists!");
-        }
+        if(userExists) throw new Error('User already exists');
+
         const usernameTaken = await User.findOne({ username });
-        if(usernameTaken){
-            res.status(400);
-            throw new Error("Username taken!");
-        }
+        if(usernameTaken) throw new Error('Username taken');
+
         const user = await User.create({
             username,
             email,
