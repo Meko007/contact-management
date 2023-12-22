@@ -1,11 +1,13 @@
-import User from "../models/userModel.js";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { Request, Response } from 'express';
+import User from '../models/user.model';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
+const jwtSecret = process.env.JWT_SECRET as string;
 //@desc Register user
 //@route POST /api/users/register
 //@access public
-export const registerUser = async (req, res) => {
+export const registerUser = async (req: Request, res: Response) => {
     try{
         const { username, email, password, confirmPassword } = req.body;
         const userExists = await User.findOne({ email });
@@ -25,7 +27,7 @@ export const registerUser = async (req, res) => {
             username: user.username, 
             email: user.email 
         });
-    }catch(err){
+    }catch(err: any){
         res.status(500).json({ message: err.message });
     }
 };
@@ -33,7 +35,7 @@ export const registerUser = async (req, res) => {
 //@desc Login user
 //@route POST /api/users/login
 //@access public
-export const loginUser = async (req, res) => {
+export const loginUser = async (req: Request, res: Response) => {
     try{
         const { email, password } = req.body;
         const user = await User.findOne({ email });
@@ -44,7 +46,7 @@ export const loginUser = async (req, res) => {
                     email: user.email,
                     id: user.id
                 },
-            }, process.env.JWT_SECRET,
+            }, jwtSecret,
                 { expiresIn: "15m" }
             );
             res.status(200).json({ accessToken });
@@ -52,7 +54,7 @@ export const loginUser = async (req, res) => {
             res.status(401);
             throw new Error("Email or password is invalid");
         }
-    }catch(err){
+    }catch(err: any){
         res.status(500).json({ message: err.message });
     }
 };
@@ -60,10 +62,10 @@ export const loginUser = async (req, res) => {
 //@desc Current user info
 //@route GET /api/users
 //@access public
-export const currentUser = async (req, res) => {
+export const currentUser = async (req: Request, res: Response) => {
     try{
         res.json(req.user);
-    }catch(err){
+    }catch(err: any){
         res.status(500).json({ message: err.message });
     }
 };

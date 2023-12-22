@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Contact from '../models/contactModel.js';
+import Contact from '../models/contact.model';
 
 //@desc Get all contacts 
 //@route GET /api/contacts
@@ -32,12 +32,13 @@ export const getContact = async (req: Request, res: Response) => {
 export const createContact = async (req: Request, res: Response) => {
     try{
         const { firstName, lastName, phoneNumber, email } = req.body;
+        const user_id = (req.user as unknown as { id: string }).id;
         const contact = await Contact.create({
             firstName,
             lastName,
             phoneNumber,
-            email,
-            user_id: req.user.id 
+            email,  
+            user_id 
         });
         // const contact = await contact.create(req.body);
         res.status(201).json(contact);

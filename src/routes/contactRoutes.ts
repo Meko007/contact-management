@@ -5,7 +5,7 @@ import {
     createContact, 
     updateContact, 
     deleteContact 
-} from '../controllers/contactController';
+} from '../controllers/contact.controller';
 import { validateToken } from '../middleware/validator';
 
 const router = express.Router();

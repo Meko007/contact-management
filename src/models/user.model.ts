@@ -1,19 +1,26 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
-import { isEmail } from '../middleware/validator.js';
+import { isEmail } from '../middleware/validator';
 
-const userSchema = new mongoose.Schema(
+interface User extends Document {
+    username: string;
+    email: string;
+    password: string;
+    confirmPassword: string | undefined;
+}
+
+const userSchema = new Schema<User>(
     {
         username: {
             type: String,
             required: [true, "Please add a username"],
-            unique: [true, "Username is taken"],
+            unique: true,
             trim: true
         },
         email: {
             type: String,
             required: [true, "Please add an email address"],
-            unique: [true, "Email address already used"],
+            unique: true,
             trim: true,
             lowercase: true,
             validate: [isEmail, "Please enter a valid email"]
@@ -21,23 +28,19 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: [true, "Please enter a password"],
-            minLength: 8,
+            minlength: 8,
             maxLength: 1024
         },
         confirmPassword: {
             type: String,
             required: [true, "Please confirm your password"],
             validate: {
-                validator: function (val) {
-                    return val === this.password 
+                validator: function (val: string): boolean {
+                    return val === (this as any).password 
                 },
                 message: `Passwords don't match!`
             }
-        },
-        role: {
-            type: String,
-            enum: ["user", "admin", "se-admin"]
-        } 
+        }
     },
     { timestamps: true }
 );
@@ -52,6 +55,6 @@ userSchema.pre('save', async function (next){
 });
 
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model<User>('User', userSchema);
 
 export default User;
