@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { isEmail } from '../middleware/validator.js';
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
     {
         username: {
             type: String,
