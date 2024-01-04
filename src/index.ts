@@ -7,8 +7,6 @@ import contactRoutes from './routes/contact.route';
 dotenv.config();
 const app = express();
 
-connectDB();
-
 const port = process.env.PORT || 3000;
 
 app.use(cors());
@@ -22,4 +20,5 @@ app.get('/', (req, res) => {
 
 app.listen(port, () => {
 	console.log(`server is listening on port ${port}`);
+	connectDB();
 });
