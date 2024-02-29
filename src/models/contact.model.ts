@@ -1,32 +1,37 @@
-import mongoose from 'mongoose';
-import { isEmail } from '../middleware/validator';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
-const contactSchema = new mongoose.Schema(
+export interface IContact extends Document {
+	user: Types.ObjectId;
+	name: string;
+	phoneNumbers: string[];
+    email: string;
+}
+
+const contactSchema = new Schema(
 	{
-		firstName: {
-			type: String,
-			required: true
+		user: {
+			type: Schema.Types.ObjectId,
+			ref: 'User',
+			required: true,
 		},
-		lastName: {
+		name: {
 			type: String,
-			required: true
+			required: true,
 		},
-		phoneNumber: {
-			type: String,
-			required: true
+		phoneNumbers: {
+			type: [String],
+			default: [],
+			required: true,
 		},
 		email: {
 			type: String,
 			trim: true,
 			lowercase: true,
-			unique: true,
-			required: true,
-			validate: [isEmail, 'Please fill a valid email address']
-		}
+		},
 	},
-	{ timestamps: true }
+	{ timestamps: true },
 );
 
-const Contact = mongoose.model('Contact', contactSchema);
+const ContactModel = mongoose.model<IContact>('Contact', contactSchema);
 
-export default Contact;
+export default ContactModel;

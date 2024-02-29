@@ -1,17 +1,24 @@
 import express from 'express';
 import {
-	getContacts,
-	getContact, 
 	createContact, 
+	getContacts,
+	getContactById, 
 	updateContact, 
-	deleteContact 
+	deleteContact,
 } from '../controllers/contact.controller';
-// import { validateToken } from '../middleware/validator';
+import { verifyToken } from '../middleware/auth';
 
 const router = express.Router();
 
-// router.use(validateToken);
-router.route('/').get(getContacts).post(createContact);
-router.route('/:id').get(getContact).put(updateContact).delete(deleteContact);
+router.use(verifyToken);
+
+router.route('/contacts')
+	.get(getContacts)
+	.post(createContact);
+
+router.route('/contacts/:id')
+	.get(getContactById)
+	.put(updateContact)
+	.delete(deleteContact);
 
 export default router;
